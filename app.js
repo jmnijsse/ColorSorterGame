@@ -152,5 +152,5 @@ function checkWin() {
 }
 
 // start
-generateLevel(3);
+generateLevel();
 render();
