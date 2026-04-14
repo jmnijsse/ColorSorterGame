@@ -14,7 +14,7 @@ const COLORS = [
 ];
 
 function getDifficulty(level) {
-    const colorCount = Math.min(3 + Math.floor(level / 3), 6);
+    const colorCount = Math.min(4 + Math.floor((level - 1) / 2), 6);
     const tubeCount = colorCount + 2 + Math.floor(level / 5);
 
     return { colorCount, tubeCount };
