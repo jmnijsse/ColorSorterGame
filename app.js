@@ -2,6 +2,7 @@ let tubes = [];
 let selected = null;
 let history = [];
 let bouncing = null; // { tube: i }
+let level = 1;
 
 const COLORS = [
     "#ff4d4d",
@@ -12,22 +13,28 @@ const COLORS = [
     "#ff944d"
 ];
 
-function generateLevel(colorCount = 3) {
+function getDifficulty(level) {
+    const colorCount = Math.min(3 + Math.floor(level / 3), 6);
+    const tubeCount = colorCount + 2 + Math.floor(level / 5);
+
+    return { colorCount, tubeCount };
+}
+
+function generateLevel() {
+    const { colorCount, tubeCount } = getDifficulty(level);
+
     let pool = [];
 
-    // maak kleuren (4 per kleur)
     for (let i = 0; i < colorCount; i++) {
         for (let j = 0; j < 4; j++) {
             pool.push(COLORS[i]);
         }
     }
 
-    // shuffle
     pool.sort(() => Math.random() - 0.5);
 
-    // verdeel in tubes
     tubes = [];
-    for (let i = 0; i < colorCount + 2; i++) {
+    for (let i = 0; i < tubeCount; i++) {
         tubes.push([]);
     }
 
@@ -36,6 +43,7 @@ function generateLevel(colorCount = 3) {
     });
 
     history = [];
+    selected = null;
 }
 
 function render() {
@@ -134,8 +142,10 @@ function checkWin() {
 
     if (win) {
         setTimeout(() => {
-            alert("🎉 Level gehaald!");
-            generateLevel(4);
+            level++;
+            alert("🎉 Level " + level);
+
+            generateLevel();
             render();
         }, 200);
     }
