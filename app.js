@@ -5,12 +5,12 @@ let bouncing = null; // { tube: i }
 let level = 1;
 
 const COLORS = [
-    "#ff4d4d",
-    "#4da6ff",
-    "#4dff88",
-    "#ffd24d",
-    "#b84dff",
-    "#ff944d"
+    "#ff2d2d", // rood
+    "#0066ff", // blauw
+    "#00c853", // groen
+    "#ffcc00", // geel
+    "#aa00ff", // paars
+    "#ff6d00"  // oranje
 ];
 
 function getDifficulty(level) {
