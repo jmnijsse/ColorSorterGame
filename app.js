@@ -114,16 +114,40 @@ function move(from, to) {
     if (from === to) return;
     if (tubes[from].length === 0) return;
 
-    let color = tubes[from][tubes[from].length - 1];
+    let source = tubes[from];
     let target = tubes[to];
 
-    if (target.length < 4 &&
-        (target.length === 0 || target[target.length - 1] === color)) {
+    let color = source[source.length - 1];
 
-        // save state (undo)
+    // tel hoeveel dezelfde kleur bovenop liggen
+    let count = 0;
+    for (let i = source.length - 1; i >= 0; i--) {
+        if (source[i] === color) count++;
+        else break;
+    }
+
+    // check hoeveel er in target mogen
+    let space = 4 - target.length;
+
+    if (
+        space > 0 &&
+        (target.length === 0 || target[target.length - 1] === color)
+    ) {
+        let moveCount = Math.min(count, space);
+
         history.push(JSON.stringify(tubes));
 
-        target.push(tubes[from].pop());
+        // 👉 animatie triggeren
+        animateMove(from, to, moveCount);
+
+        // 👉 pas NA animatie echt verplaatsen
+        setTimeout(() => {
+            for (let i = 0; i < moveCount; i++) {
+                target.push(source.pop());
+            }
+            render();
+            checkWin();
+        }, 300);
     }
 }
 
@@ -148,6 +172,42 @@ function checkWin() {
             generateLevel();
             render();
         }, 200);
+    }
+}
+
+function animateMove(from, to, count) {
+    const game = document.getElementById("game");
+    const tubesDOM = game.children;
+
+    const fromTube = tubesDOM[from];
+    const toTube = tubesDOM[to];
+
+    const fromRect = fromTube.getBoundingClientRect();
+    const toRect = toTube.getBoundingClientRect();
+
+    for (let i = 0; i < count; i++) {
+        const marble = document.createElement("div");
+        marble.className = "marble flying";
+
+        marble.style.background = `radial-gradient(circle at 30% 30%, white, ${
+            tubes[from][tubes[from].length - 1 - i]
+        })`;
+
+        marble.style.position = "fixed";
+        marble.style.left = fromRect.left + 10 + "px";
+        marble.style.top = fromRect.top + 20 + "px";
+
+        document.body.appendChild(marble);
+
+        setTimeout(() => {
+            marble.style.transform = `translate(${toRect.left - fromRect.left}px, ${
+                toRect.top - fromRect.top
+            }px)`;
+        }, 10);
+
+        setTimeout(() => {
+            marble.remove();
+        }, 300);
     }
 }
 
