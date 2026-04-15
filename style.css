@@ -102,6 +102,12 @@ button {
   animation: bounceTop 0.35s ease;
 }
 
+.flying {
+  transition: transform 0.3s ease;
+  z-index: 1000;
+  pointer-events: none;
+}
+
 .drop {
   animation: drop 0.2s ease;
 }
