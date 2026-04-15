@@ -194,23 +194,59 @@ function animateMove(from, to, count) {
         })`;
 
         marble.style.position = "fixed";
-        marble.style.left = fromRect.left + 10 + "px";
+        marble.style.left = fromRect.left + 12 + "px";
         marble.style.top = fromRect.top + 20 + "px";
 
         document.body.appendChild(marble);
 
-        setTimeout(() => {
-            marble.style.transform = `translate(${toRect.left - fromRect.left}px, ${
-                toRect.top - fromRect.top
-            }px)`;
-        }, 10);
-
-        setTimeout(() => {
-            marble.remove();
-        }, 300);
+        animateParabola(marble, fromRect, toRect, i * 80);
     }
 }
 
+function animateParabola(el, from, to, delay = 0) {
+    const duration = 400;
+
+    const startX = from.left + 12;
+    const startY = from.top + 20;
+
+    const endX = to.left + 12;
+    const endY = to.top + 20;
+
+    const height = -80; // hoe hoog de boog
+
+    let startTime = null;
+
+    setTimeout(() => {
+        function frame(time) {
+            if (!startTime) startTime = time;
+            let t = (time - startTime) / duration;
+
+            if (t > 1) t = 1;
+
+            // easing (smooth start/end)
+            let ease = t * (2 - t);
+
+            // lineaire x
+            let x = startX + (endX - startX) * ease;
+
+            // parabool y
+            let y =
+                startY +
+                (endY - startY) * ease +
+                height * (4 * ease * (1 - ease));
+
+            el.style.transform = `translate(${x - startX}px, ${y - startY}px)`;
+
+            if (t < 1) {
+                requestAnimationFrame(frame);
+            } else {
+                el.remove();
+            }
+        }
+
+        requestAnimationFrame(frame);
+    }, delay);
+}
 // start
 generateLevel();
 render();
